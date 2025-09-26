@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Futuristic Terminal Portfolio — Mohamed Ghaith Romdhani</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0f1d;
+      --panel:#0d1223;
+      --text:#cfe8ff;
+      --muted:#7f9fb8;
+      --accent:#00ffff;
+      --glass: rgba(255,255,255,0.02);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'JetBrains Mono', monospace;background:var(--bg);color:var(--text);overflow:hidden;}
+    body{position:relative;}
+    canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;z-index:1}
+    .terminal{width:min(1000px,96vw);border-radius:12px;background:linear-gradient(180deg,var(--panel),rgba(3,6,12,0.9));box-shadow:0 10px 40px rgba(2,6,20,0.7);overflow:hidden;display:grid;grid-template-columns:300px 1fr;backdrop-filter: blur(6px);position:relative;z-index:1;}
+    .side{padding:1.25rem;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-right:1px solid rgba(255,255,255,0.03);min-height:420px;}
+    .avatar{width:100%;display:flex;gap:0.85rem;align-items:center;margin-bottom:1rem}
+    .avatar .img{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#6ec1ff);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .name{font-size:0.95rem}
+    .role{font-size:0.72rem;color:var(--muted);margin-top:0.25rem}
+    nav{margin-top:1rem}
+    nav a{display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none;font-size:0.9rem}
+    nav a:hover{background:var(--glass)}
+    .meta{margin-top:1.5rem;color:var(--muted);font-size:0.8rem}
+    .main{padding:1rem 1.25rem;position:relative}
+    .toolbar{display:flex;gap:0.6rem;align-items:center;margin-bottom:0.6rem}
+    .dots{display:flex;gap:0.35rem}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.r{background:#ff6b6b}
+    .dot.y{background:#ffce55}
+    .dot.g{background:#4ec97e}
+    .screen{background:rgba(0,0,0,0.12);padding:1rem;border-radius:8px;min-height:340px;overflow:auto}
+    .line{white-space:pre-wrap;font-size:0.95rem;line-height:1.5}
+    .prompt{color:var(--accent);margin-right:0.6rem}
+    /* ---- INPUT / CARET ---- */
+    .entry{display:flex;gap:8px;align-items:flex-start;margin-top:0.8rem}
+    .input{flex:1}
+    .cmd{
+      background:transparent;
+      border:0;
+      outline:none;
+      color:var(--text);
+      font-family:inherit;
+      font-size:0.95rem;
+      width:100%;
+      caret-color: var(--accent);           /* <-- glowing caret inside the input */
+      -webkit-text-fill-color: var(--text); /* chrome fix for caret-color consistency */
+    }
+    .cmd::placeholder{color:rgba(207,232,255,0.35)}
+    @media (max-width:820px){.terminal{grid-template-columns:1fr}.side{display:flex;gap:0.6rem;align-items:center}}
+    .footer{margin-top:0.8rem;color:var(--muted);font-size:0.8rem}
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <div class="wrap">
+    <div class="terminal" role="region" aria-label="Terminal portfolio">
+      <aside class="side">
+        <div class="avatar">
+  <img src="C:\Users\ghait\OneDrive\Desktop\lasttry\pic S.jpg" alt="Mohamed Ghaith Romdhani" class="img" />
+  <div>
+    <div class="name">Mohamed Ghaith Romdhani</div>
+    <div class="role">Engineer in Networks, Systems & Innovation</div>
+  </div>
+</div>
+
+
+        <nav>
+          <a href="#about">about</a>
+          <a href="#projects">projects</a>
+          <a href="#skills">skills</a>
+          <a href="#contact">contact</a>
+        </nav>
+
+        <div class="meta">
+          <div>Location: Ben Arous, Tunisia</div>
+          <div style="margin-top:0.5rem">Email: <a href="mailto:ghaith.romdhani@ieee.org" style="color:var(--accent)">ghaith.romdhani@ieee.org</a></div>
+          <div style="margin-top:0.5rem">Phone: +216 58358417</div>
+          <div style="margin-top:0.5rem">LinkedIn: <a href="https://linkedin.com/in/mohamedghaithromdhani" target="_blank" style="color:var(--accent)">linkedin.com/in/mohamedghaithromdhani</a></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="toolbar">
+          <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+          <div style="margin-left:auto;color:var(--muted);font-size:0.8rem">terminal-portfolio</div>
+        </div>
+
+        <div class="screen" id="screen" tabindex="0" role="application" aria-label="Terminal screen">
+          <div class="line">Welcome — type <span style="color:var(--accent)">help</span> to see commands.</div>
+          <div class="line" id="output"></div>
+
+          <div class="entry" id="entryRow">
+            <div class="prompt">$</div>
+            <div class="input"><input id="cmdInput" class="cmd" autocomplete="off" placeholder="type a command (try: help)" /></div>
+          </div>
+        </div>
+
+        <div class="footer">Tip: Press Up/Down to navigate history.</div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // ========== Background (lines + stars + rockets) ==========
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    const lines = Array.from({length:50}, () => ({ x: Math.random()*w, y: Math.random()*h, length: Math.random()*200+50, speed: Math.random()*1+0.2 }));
+    const stars = Array.from({length:100}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.5+0.5, alpha: Math.random(), dAlpha: Math.random()*0.02+0.01 }));
+    const rockets = Array.from({length:5}, () => ({ x: Math.random()*w, y: h + Math.random()*200, width: 6, height: 12, speed: Math.random()*1+1 }));
+
+    function drawBackground(){
+      ctx.clearRect(0,0,w,h);
+      // lines
+      ctx.strokeStyle = 'rgba(0,255,255,0.12)';
+      ctx.lineWidth = 1;
+      for (const l of lines){
+        ctx.beginPath();
+        ctx.moveTo(l.x, l.y);
+        ctx.lineTo(l.x, l.y + l.length);
+        ctx.stroke();
+        l.y += l.speed;
+        if (l.y > h){ l.y = -l.length; l.x = Math.random()*w; }
+      }
+      // stars (twinkle)
+      for (const s of stars){
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fill();
+        s.alpha += s.dAlpha;
+        if (s.alpha > 1 || s.alpha < 0){ s.dAlpha *= -1; }
+      }
+      // rockets (simple triangle)
+      for (const r of rockets){
+        ctx.fillStyle = 'rgba(255,130,60,0.95)';
+        ctx.beginPath();
+        ctx.moveTo(r.x, r.y);
+        ctx.lineTo(r.x - r.width/2, r.y + r.height);
+        ctx.lineTo(r.x + r.width/2, r.y + r.height);
+        ctx.closePath();
+        ctx.fill();
+        r.y -= r.speed;
+        if (r.y < -r.height){ r.y = h + Math.random()*100; r.x = Math.random()*w; r.speed = Math.random()*1+1; }
+      }
+    }
+
+    function animate(){
+      drawBackground();
+      requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', ()=>{ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
+
+    // ========== Terminal logic ==========
+    const input = document.getElementById('cmdInput');
+    const screen = document.getElementById('screen');
+
+    const commands = {
+      help: `available commands:\n - about\n - projects\n - skills\n - resume\n - contact\n - theme <color>\n - clear`,
+      about: `Hi, I'm Mohamed Ghaith Romdhani.\nEngineer in networks, systems, and innovation.\nChair of IEEE ISIMA SB & CEO of SmartAero Projects.`,
+      projects: `Projects:\n- 3D Printed Solar Energy Tree\n- Smart Forest Fire Detection\n- Zima Green Recycling\n- Aeroponic Farming Solutions`,
+      skills: `Skills:\n- Networking & Systems\n- Cybersecurity\n- Cloud & Virtualization\n- AI & LangChain\n- Programming: Python, JS, Bash\n- Renewable Energy & Agritech`,
+      resume: `Resume: (add link if available)`,
+      contact: `Email: ghaith.romdhani@ieee.org\nPhone: +216 58358417\nLinkedIn: linkedin.com/in/mohamedghaithromdhani`
+    };
+
+    const themes = {
+      cyan: { accent: '#00ffff', text: '#cfe8ff' },
+      magenta: { accent: '#ff00ff', text: '#ffb3ff' },
+      green: { accent: '#00ff00', text: '#b3ffb3' },
+      amber: { accent: '#ff9900', text: '#ffd699' }
+    };
+
+    const history = [];
+    const availableThemeNames = Object.keys(themes);
+    let histIndex = -1;
+
+    function appendLine(txt){
+      const node = document.createElement('div');
+      node.className = 'line';
+      node.textContent = txt;
+      screen.insertBefore(node, document.getElementById('entryRow'));
+      screen.scrollTop = screen.scrollHeight;
+    }
+
+    function runCmd(raw){
+      const cmd = raw.trim();
+      if(!cmd) return;
+      appendLine(`$ ${cmd}`);
+      history.push(cmd);
+      histIndex = history.length;
+      input.value = '';
+
+      if (cmd === 'clear'){
+        document.querySelectorAll('.screen .line').forEach(el => el.remove());
+        appendLine('Welcome — type help to get started.');
+        return;
+      }
+
+      if (cmd.startsWith('theme')){
+        const parts = cmd.split(' ').filter(Boolean);
+        if (parts.length === 1){
+          appendLine(`Available themes: ${availableThemeNames.join(', ')}`);
+          return;
+        }
+        const t = parts[1];
+        if (themes[t]){
+          document.documentElement.style.setProperty('--accent', themes[t].accent);
+          document.documentElement.style.setProperty('--text', themes[t].text);
+          // update avatar gradient to use new accent (small visual polish)
+          document.querySelector('.avatar .img').style.background = `linear-gradient(135deg, ${themes[t].accent}, #6ec1ff)`;
+          appendLine(`Theme changed to ${t}`);
+        } else {
+          appendLine(`Unknown theme: ${t}`);
+        }
+        return;
+      }
+
+      if (commands[cmd]){
+        appendLine(commands[cmd]);
+      } else {
+        appendLine(`command not found: ${cmd} — type help`);
+      }
+    }
+
+    // keyboard handling: Enter, Up/Down, Tab autocomplete
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        runCmd(input.value);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (history.length) {
+          histIndex = Math.max(0, histIndex - 1);
+          input.value = history[histIndex] || '';
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (history.length) {
+          histIndex = Math.min(history.length, histIndex + 1);
+          input.value = history[histIndex] || '';
+        }
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        const val = input.value.trim();
+        if (!val) return;
+        // include 'theme' and other commands
+        const keys = Object.keys(commands).concat(['theme']).filter(k => k.startsWith(val));
+        if (keys.length) input.value = keys[0];
+      }
+    });
+
+    // focus behaviour
+    screen.addEventListener('click', () => input.focus());
+    window.addEventListener('load', () => { input.focus(); });
+
+    // initial message
+    setTimeout(() => appendLine('Type `help` to get started.'), 300);
+
+  </script>
+</body>
+</html>
