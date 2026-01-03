@@ -18,9 +18,9 @@
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:'JetBrains Mono', monospace;background:var(--bg);color:var(--text);}
     body{position:relative;min-height:100vh;}
-    canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;z-index:1;overflow:auto}
-    .terminal{width:min(1000px,96vw);border-radius:12px;background:linear-gradient(180deg,var(--panel),rgba(3,6,12,0.9));box-shadow:0 10px 40px rgba(2,6,20,0.7);overflow:hidden;display:grid;grid-template-columns:300px 1fr;backdrop-filter: blur(6px);position:relative;z-index:1;}
+    canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+    .wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;z-index:1;overflow:auto}
+    .terminal{width:min(1000px,96vw);border-radius:12px;background:linear-gradient(180deg,var(--panel),rgba(3,6,12,0.9));box-shadow:0 10px 40px rgba(2,6,20,0.7);overflow:visible;display:grid;grid-template-columns:300px 1fr;backdrop-filter: blur(6px);position:relative;z-index:1;max-height:calc(100dvh - 24px)}
     .side{padding:1.25rem;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-right:1px solid rgba(255,255,255,0.03);min-height:420px;}
     .avatar{width:100%;display:flex;gap:0.85rem;align-items:center;margin-bottom:1rem}
     .avatar .img{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#6ec1ff);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden}
@@ -62,12 +62,12 @@
       .terminal{width:98vw;grid-template-columns:1fr;box-shadow:0 6px 24px rgba(2,6,20,0.6)}
       .side{flex-direction:row;align-items:center;padding:0.75rem;border-right:0;border-bottom:1px solid rgba(255,255,255,0.03)}
       .avatar{margin-bottom:0}
-      nav{display:flex;gap:0.5rem;margin-left:auto}
-      nav a{padding:0.4rem 0.5rem;font-size:0.82rem}
+      nav{display:flex;gap:0.5rem;margin-left:auto;overflow-x:auto;padding-bottom:0.25rem}
+      nav a{padding:0.6rem 0.75rem;font-size:0.9rem;min-width:56px;text-align:center}
       .screen{min-height:260px}
     }
     @media (max-width:400px){
-      html,body{font-size:14px}
+      html,body{font-size:15px}
       .terminal{border-radius:8px}
       .toolbar .dots{display:none}
     }
@@ -141,23 +141,30 @@
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
 
-    // particles configuration
-    const PARTICLE_COUNT = 60;
+    // particles configuration (count scales with screen size)
     const particles = [];
     const mouse = { x: w / 2, y: h / 2 };
 
     function rand(min, max){ return Math.random() * (max - min) + min }
 
+    function getParticleCount(){
+      if (w > 1200) return 80;
+      if (w > 800) return 60;
+      if (w > 600) return 40;
+      return 14;
+    }
+
     function initParticles(){
       particles.length = 0;
-      for (let i = 0; i < PARTICLE_COUNT; i++){
+      const count = getParticleCount();
+      for (let i = 0; i < count; i++){
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
           r: rand(0.6, 3.2),
-          vx: rand(-0.2, 0.2),
-          vy: rand(-0.05, 0.05),
-          alpha: rand(0.15, 0.9)
+          vx: rand(-0.18, 0.18),
+          vy: rand(-0.04, 0.04),
+          alpha: rand(0.12, 0.85)
         });
       }
     }
@@ -208,15 +215,35 @@
     initParticles();
     if (animateEnabled) animateLoop(); else drawBackground();
 
-    // interactivity: parallax on pointer move (lightweight)
-    window.addEventListener('pointermove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    // interactivity: parallax on pointer move (only when animation enabled)
+    let pointerMoveHandler = null;
+    function enablePointerMove(){
+      if (pointerMoveHandler) return;
+      pointerMoveHandler = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+      window.addEventListener('pointermove', pointerMoveHandler);
+    }
+    function disablePointerMove(){
+      if (!pointerMoveHandler) return;
+      window.removeEventListener('pointermove', pointerMoveHandler);
+      pointerMoveHandler = null;
+      mouse.x = w/2; mouse.y = h/2;
+    }
+
+    if (animateEnabled) enablePointerMove();
+
     window.addEventListener('resize', () => {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
       initParticles();
       // toggle animation on small screens
       animateEnabled = !prefersReduced && window.innerWidth > 600;
-      if (!animateEnabled) drawBackground(); else animateLoop();
+      if (!animateEnabled) {
+        disablePointerMove();
+        drawBackground();
+      } else {
+        enablePointerMove();
+        animateLoop();
+      }
     });
 
     // ========== Terminal logic ==========
@@ -357,6 +384,17 @@
     // focus behaviour
     screen.addEventListener('click', () => input.focus());
     window.addEventListener('load', () => { input.focus(); });
+    // on mobile, ensure the input row scrolls into view when keyboard opens
+    input.addEventListener('focus', () => {
+      setTimeout(() => {
+        const entry = document.getElementById('entryRow');
+        if (entry && typeof entry.scrollIntoView === 'function'){
+          entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 350);
+    });
+    // also ensure tapping the screen focuses input (helpful on mobile)
+    screen.addEventListener('touchstart', () => input.focus());
 
     // initial message
     setTimeout(() => appendLine('Type `help` to get started.'), 300);
