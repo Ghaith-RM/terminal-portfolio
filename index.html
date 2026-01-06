@@ -6,19 +6,66 @@
 <title>Mohamed Ghaith Romdhani — Galaxy + Asteroids</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#000;--panel:#0b0f18;--text:#cfe8ff;--muted:#7f9fb8;--accent:#00ffff}
+:root{
+  --bg:#000;
+  --panel:rgba(11,15,24,0.7);
+  --glass:rgba(255,255,255,0.03);
+  --text:#cfe8ff;
+  --muted:#7f9fb8;
+  --accent:#00e6ff;
+  --accent-2:#6ec1ff;
+  --accent-contrast:#00121a;
+}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text)}
-canvas#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+html,body{height:100%;margin:0;font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+canvas#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.98}
 .wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;z-index:1;overflow:auto}
-.terminal{width:min(1000px,96vw);border-radius:12px;background:linear-gradient(180deg,var(--panel),rgba(3,6,12,0.85));box-shadow:0 10px 40px rgba(2,6,20,0.7);display:grid;grid-template-columns:300px 1fr;backdrop-filter: blur(6px);position:relative;z-index:1;max-height:calc(100dvh - 24px)}
-.side{padding:1.25rem;border-right:1px solid rgba(255,255,255,0.03)}
-.avatar .img{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#6ec1ff);overflow:hidden}
-.screen{background:rgba(0,0,0,0.12);padding:1rem;border-radius:8px;min-height:340px;overflow:auto}
+.terminal{
+  width:min(1000px,96vw);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--panel),rgba(3,6,12,0.85));
+  box-shadow:0 14px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+  display:grid;grid-template-columns:300px 1fr;backdrop-filter: blur(8px);
+  position:relative;z-index:1;max-height:calc(100dvh - 24px);overflow:hidden;
+}
+.side{padding:1.3rem;border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:0.8rem}
+.avatar{display:flex;gap:0.6rem;align-items:center}
+.avatar .img{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.6);flex-shrink:0;border:1px solid rgba(255,255,255,0.04)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:8px}
+.side .name{font-size:0.98rem;font-weight:700}
+.side .role{font-size:0.72rem;color:var(--muted);margin-top:0.25rem}
+nav{margin-top:0.6rem}
+.nav-btn{
+  display:block;padding:0.55rem;border-radius:8px;color:var(--text);text-decoration:none;font-weight:600;
+  transition:all 220ms ease;position:relative;
+}
+.nav-btn:hover{
+  transform:translateX(6px);
+  background:linear-gradient(90deg, rgba(0,230,255,0.06), rgba(110,193,255,0.03));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+#resumeBtn{
+  display:inline-block;margin-top:0.6rem;padding:0.5rem 0.7rem;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--accent-contrast);font-weight:700;border:0;text-decoration:none;cursor:pointer;
+  transition:transform 160ms ease, box-shadow 160ms ease;
+}
+#resumeBtn:hover{ transform:translateY(-2px); box-shadow:0 8px 30px rgba(30,160,200,0.12) }
+
+.sidebar-links{margin-top:0.6rem;font-size:0.9rem;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+.sidebar-links a{color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px;padding:0.25rem 0.35rem;border-radius:8px;transition:background 180ms ease}
+.sidebar-links a:hover{background:rgba(255,255,255,0.02)}
+
+.screen{background:linear-gradient(180deg, rgba(0,0,0,0.16), rgba(255,255,255,0.02));padding:1rem;border-radius:8px;min-height:340px;overflow:auto;position:relative}
 .entry{display:flex;gap:8px;align-items:flex-start;margin-top:0.8rem}
-.cmd{background:transparent;border:0;outline:none;color:var(--text);font-family:inherit;font-size:0.95rem;width:100%;caret-color:var(--accent);-webkit-text-fill-color:var(--text)}
-@media (max-width:820px){.terminal{grid-template-columns:1fr}.side{display:flex;gap:0.6rem;align-items:center}}
-@media (max-width:600px){canvas#bgCanvas{display:none}.wrap{padding:1rem}.terminal{width:98vw}}
+.cmd{background:transparent;border:0;outline:none;color:var(--text);font-family:inherit;font-size:0.95rem;width:100%;caret-color:var(--accent);padding:6px;border-radius:6px}
+.cmd:focus{box-shadow:0 6px 24px rgba(0,230,255,0.06) inset}
+
+.line{opacity:0;transform:translateY(6px);animation:fadeIn 420ms ease forwards}
+@keyframes fadeIn{to{opacity:1;transform:none}}
+
+.footer-note{margin-top:auto;font-size:0.8rem;color:var(--muted)}
+
+@media (max-width:820px){.terminal{grid-template-columns:1fr}.side{flex-direction:row;gap:0.8rem;align-items:center;padding:0.8rem}.sidebar-links{display:none}}
+@media (max-width:600px){canvas#bgCanvas{display:none}.wrap{padding:1rem}.terminal{width:98vw;border-radius:10px}}
 #bgToggle{position:fixed;right:12px;top:12px;z-index:9999;background:rgba(0,0,0,0.45);color:#fff;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;font-family:inherit}
 </style>
 </head>
@@ -28,26 +75,43 @@ canvas#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-
 <div class="wrap">
   <div class="terminal" role="region" aria-label="Terminal portfolio">
     <aside class="side">
-      <div class="avatar" style="display:flex;gap:0.6rem;align-items:center">
-        <div class="img" style="width:56px;height:56px"><img src="pics.jpg" alt="avatar" style="width:100%;height:100%;object-fit:cover" loading="lazy"></div>
-        <div style="font-size:0.95rem">
-          <div>Mohamed Ghaith Romdhani</div>
-          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.25rem">Engineer in Networks, Systems & Innovation</div>
+      <div class="avatar" >
+        <div class="img"><img src="pics.jpg" alt="avatar" loading="lazy"></div>
+        <div>
+          <div class="name">Mohamed Ghaith Romdhani</div>
+          <div class="role">Engineer in Networks, Systems & Innovation</div>
         </div>
       </div>
 
-      <nav role="navigation" aria-label="Primary" style="margin-top:1rem">
-        <a href="#" class="nav-btn" data-cmd="about" style="display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none">about</a>
-        <a href="#" class="nav-btn" data-cmd="projects" style="display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none">projects</a>
-        <a href="#" class="nav-btn" data-cmd="skills" style="display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none">skills</a>
-        <a href="#" class="nav-btn" data-cmd="contact" style="display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none">contact</a>
-        <a href="#" id="resumeBtn" class="nav-btn" data-href="#" style="display:block;padding:0.55rem;border-radius:6px;color:var(--text);text-decoration:none;margin-top:0.6rem">resume</a>
+      <nav role="navigation" aria-label="Primary">
+        <a href="#" class="nav-btn" data-cmd="about">about</a>
+        <a href="#" class="nav-btn" data-cmd="projects">projects</a>
+        <a href="#" class="nav-btn" data-cmd="skills">skills</a>
+        <a href="#" class="nav-btn" data-cmd="contact">contact</a>
+        <a href="#" id="resumeBtn" class="nav-btn" data-href="#">Resume</a>
+
+        <div class="sidebar-links" aria-label="Resume links">
+          <a id="lnkLinkedIn" href="https://www.linkedin.com/in/mohamedghaithromdhani/" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden style="opacity:0.9"><path d="M4 4h16v16H4z" fill="transparent"/></svg>
+            LinkedIn /ghaith-romdhani
+          </a>
+          <a id="lnkEmail" href="mailto:ghaith.romdhani@ieee.org">
+            <svg width="14" height="12" viewBox="0 0 24 24" fill="none" aria-hidden style="opacity:0.9"><path d="M2 6l10 7L22 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ghaith.romdhani@ieee.org
+          </a>
+        </div>
+
+        <div class="footer-note">Tip: Press Up/Down to navigate history.</div>
       </nav>
     </aside>
 
     <main style="padding:1rem 1.25rem;position:relative">
       <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.6rem">
-        <div style="display:flex;gap:0.35rem"><span style="width:10px;height:10px;border-radius:50%;background:#ff6b6b;display:inline-block"></span><span style="width:10px;height:10px;border-radius:50%;background:#ffce55;display:inline-block"></span><span style="width:10px;height:10px;border-radius:50%;background:#4ec97e;display:inline-block"></span></div>
+        <div style="display:flex;gap:0.35rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ff6b6b;display:inline-block"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#ffce55;display:inline-block"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#4ec97e;display:inline-block"></span>
+        </div>
         <select id="themeSelect" aria-label="Select theme" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);padding:6px;border-radius:6px;margin-left:auto">
           <option value="">Theme</option><option value="cyan">Cyan</option><option value="magenta">Magenta</option><option value="green">Green</option><option value="amber">Amber</option>
         </select>
@@ -62,8 +126,6 @@ canvas#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-
           <div class="input"><input id="cmdInput" class="cmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type a command (try: help)" aria-label="Terminal command input" /></div>
         </div>
       </div>
-
-      <div style="margin-top:0.8rem;color:var(--muted);font-size:0.8rem">Tip: Press Up/Down to navigate history.</div>
     </main>
   </div>
 </div>
@@ -71,72 +133,29 @@ canvas#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-
 <button id="bgToggle" aria-pressed="true">BG: On</button>
 
 <script>
-/* Galaxy + planets + asteroids (replaces rockets) */
+
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 let w = canvas.width = innerWidth;
 let h = canvas.height = innerHeight;
 const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MIN_WIDTH = 600;
-
 function rand(a,b){return Math.random()*(b-a)+a}
 let userToggle = localStorage.getItem('bgEnabled'); userToggle = userToggle === null ? null : userToggle === '1';
 function allowed(){ if (userToggle === false) return false; if (prefersReduced) return false; if (innerWidth <= MIN_WIDTH) return false; return userToggle === null ? true : userToggle; }
 let enabled = allowed();
-
 const stars = [], nebula = [];
-const planets = []; // planets with rings
-const asteroids = []; // moving asteroids
-
+const planets = [];
+const asteroids = [];
 function starCount(){ if (w>1400) return 140; if (w>1000) return 100; if (w>700) return 70; return 30; }
 function initStars(){ stars.length=0; for(let i=0;i<starCount();i++) stars.push({x:rand(0,w),y:rand(0,h),r:rand(0.3,1.6),base:rand(0.15,0.95),phase:rand(0,Math.PI*2),vx:rand(-0.02,0.02),vy:rand(-0.004,0.004)}); }
-
 function initNebula(){ nebula.length=0; const count = Math.max(2, Math.round(w/650)); for(let i=0;i<count;i++){ nebula.push({x:rand(w*0.08,w*0.92),y:rand(h*0.05,h*0.85),r:rand(Math.min(w,h)*0.18,Math.min(w,h)*0.45),hue:(i%2===0)?rand(240,300):rand(180,220),ox:rand(-40,40),oy:rand(-40,40),vx:rand(-0.02,0.02),vy:rand(-0.02,0.02)}); } }
-
-function initPlanets(){
-  planets.length = 0;
-  // big purple planet (left)
-  planets.push({x: w*0.18, y: h*0.62, r: Math.min(w,h)*0.12, hue: 270, ring:true, ringWidth: 18, ringTilt: -0.5, spin: rand(0.001,0.004)});
-  // teal planet (right, smaller)
-  planets.push({x: w*0.78, y: h*0.34, r: Math.min(w,h)*0.08, hue: 190, ring:false, spin: rand(0.002,0.006)});
-}
-
-function createAsteroidShape(size, vertsCount){
-  const verts = [];
-  for(let i=0;i<vertsCount;i++){
-    const a = (i/vertsCount) * Math.PI*2;
-    const r = size * rand(0.6,1.15);
-    verts.push({x: Math.cos(a)*r, y: Math.sin(a)*r});
-  }
-  return verts;
-}
-
-function initAsteroids(){
-  asteroids.length = 0;
-  const count = Math.max(3, Math.round(w/600));
-  for(let i=0;i<count;i++){
-    const dir = (Math.random() < 0.5) ? 1 : -1;
-    const size = rand(Math.min(w,h)*0.02, Math.min(w,h)*0.05);
-    asteroids.push({
-      x: dir>0 ? -rand(40,160) : w + rand(40,160),
-      y: rand(0,h),
-      vx: dir * rand(0.25,0.9),
-      vy: rand(-0.03,0.03),
-      size: size,
-      angle: rand(0,Math.PI*2),
-      angVel: rand(-0.008,0.01),
-      verts: createAsteroidShape(size, Math.round(rand(6,12))),
-      hue: rand(20,40) // slightly brownish
-    });
-  }
-}
-
+function initPlanets(){ planets.length = 0; planets.push({x: w*0.18, y: h*0.62, r: Math.min(w,h)*0.12, hue: 270, ring:true, ringWidth: 18, ringTilt: -0.5, spin: rand(0.001,0.004)}); planets.push({x: w*0.78, y: h*0.34, r: Math.min(w,h)*0.08, hue: 190, ring:false, spin: rand(0.002,0.006)}); }
+function createAsteroidShape(size, vertsCount){ const verts = []; for(let i=0;i<vertsCount;i++){ const a = (i/vertsCount) * Math.PI*2; const r = size * rand(0.6,1.15); verts.push({x: Math.cos(a)*r, y: Math.sin(a)*r}); } return verts; }
+function initAsteroids(){ asteroids.length = 0; const count = Math.max(3, Math.round(w/600)); for(let i=0;i<count;i++){ const dir = (Math.random() < 0.5) ? 1 : -1; const size = rand(Math.min(w,h)*0.02, Math.min(w,h)*0.05); asteroids.push({ x: dir>0 ? -rand(40,160) : w + rand(40,160), y: rand(0,h), vx: dir * rand(0.25,0.9), vy: rand(-0.03,0.03), size: size, angle: rand(0,Math.PI*2), angVel: rand(-0.008,0.01), verts: createAsteroidShape(size, Math.round(rand(6,12))), hue: rand(20,40) }); } }
 function drawBackground(){
-  // black base
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);
-
-  // nebula blobs
   ctx.globalCompositeOperation='lighter';
   const t = performance.now()/6000;
   for(const n of nebula){
@@ -149,149 +168,94 @@ function drawBackground(){
     rg.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(nx,ny,n.r,0,Math.PI*2); ctx.fill();
   }
-
-  // planets (draw before stars so stars appear over parts)
   ctx.globalCompositeOperation='source-over';
   for(const p of planets){
-    // subtle spin offset
     p._rot = (p._rot||0) + (p.spin||0);
-    // planet gradient
     const gx = ctx.createRadialGradient(p.x - p.r*0.3, p.y - p.r*0.3, p.r*0.1, p.x, p.y, p.r);
     gx.addColorStop(0, `hsl(${p.hue},75%,75%)`);
     gx.addColorStop(0.5, `hsl(${p.hue},55%,48%)`);
     gx.addColorStop(1, `hsl(${p.hue},30%,20%)`);
     ctx.fillStyle = gx; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
-
-    // subtle surface band
-    ctx.save();
-    ctx.globalAlpha = 0.08;
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y, p.r*0.9, p.r*0.32, p._rot, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // ring
-    if (p.ring){
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.ringTilt || 0);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, p.r + p.ringWidth, p.r*0.36, 0, 0, Math.PI*2);
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = `rgba(255,255,255,0.06)`;
-      ctx.stroke();
-      ctx.restore();
-    }
+    ctx.save(); ctx.globalAlpha = 0.08; ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r*0.9, p.r*0.32, p._rot, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    if (p.ring){ ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ringTilt || 0); ctx.beginPath(); ctx.ellipse(0, 0, p.r + p.ringWidth, p.r*0.36, 0, 0, Math.PI*2); ctx.lineWidth = 6; ctx.strokeStyle = `rgba(255,255,255,0.06)`; ctx.stroke(); ctx.restore(); }
   }
-
-  // stars on top
   ctx.globalCompositeOperation='screen';
-  for(const s of stars){
-    const alpha = Math.max(0.05, s.base * (0.55 + 0.45 * Math.sin((performance.now()/900)+s.phase)));
-    ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
-  }
-
-  // asteroids (draw on top)
-  for(const a of asteroids){
-    drawAsteroid(a);
-  }
-
-  // vignette
+  for(const s of stars){ const alpha = Math.max(0.05, s.base * (0.55 + 0.45 * Math.sin((performance.now()/900)+s.phase))); ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }
+  for(const a of asteroids){ drawAsteroid(a); }
   ctx.globalCompositeOperation='source-over';
   const vign = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)/2.2,w/2,h/2,Math.max(w,h)/1.1);
   vign.addColorStop(0,'rgba(0,0,0,0)'); vign.addColorStop(1,'rgba(0,0,0,0.32)');
   ctx.fillStyle=vign; ctx.fillRect(0,0,w,h);
 }
-
 function drawAsteroid(a){
-  ctx.save();
-  ctx.translate(a.x, a.y);
-  ctx.rotate(a.angle);
-  // body gradient
+  ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.angle);
   const g = ctx.createLinearGradient(-a.size, -a.size, a.size, a.size);
-  g.addColorStop(0, `hsl(${a.hue},12%,30%)`);
-  g.addColorStop(1, `hsl(${a.hue+10},8%,18%)`);
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  const v0 = a.verts[0];
-  ctx.moveTo(v0.x, v0.y);
-  for(let i=1;i<a.verts.length;i++){
-    ctx.lineTo(a.verts[i].x, a.verts[i].y);
-  }
-  ctx.closePath();
-  ctx.fill();
-  // subtle edge stroke
-  ctx.lineWidth = Math.max(1, a.size*0.06);
-  ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-  ctx.stroke();
-
-  // small craters
+  g.addColorStop(0, `hsl(${a.hue},12%,30%)`); g.addColorStop(1, `hsl(${a.hue+10},8%,18%)`);
+  ctx.fillStyle = g; ctx.beginPath(); const v0 = a.verts[0]; ctx.moveTo(v0.x, v0.y);
+  for(let i=1;i<a.verts.length;i++){ ctx.lineTo(a.verts[i].x, a.verts[i].y); }
+  ctx.closePath(); ctx.fill();
+  ctx.lineWidth = Math.max(1, a.size*0.06); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.stroke();
   const craters = Math.max(1, Math.floor(a.size*0.02));
-  for(let i=0;i<craters;i++){
-    const cx = rand(-a.size*0.6,a.size*0.6);
-    const cy = rand(-a.size*0.6,a.size*0.6);
-    const cr = rand(a.size*0.08, a.size*0.22);
-    ctx.globalAlpha = 0.12;
-    ctx.fillStyle = 'rgba(0,0,0,0.8)';
-    ctx.beginPath(); ctx.ellipse(cx, cy, cr, cr*0.8, rand(0,Math.PI*2), 0, Math.PI*2); ctx.fill();
-    ctx.globalAlpha = 1;
-  }
-
+  for(let i=0;i<craters;i++){ const cx = rand(-a.size*0.6,a.size*0.6); const cy = rand(-a.size*0.6,a.size*0.6); const cr = rand(a.size*0.08, a.size*0.22); ctx.globalAlpha = 0.12; ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.beginPath(); ctx.ellipse(cx, cy, cr, cr*0.8, rand(0,Math.PI*2), 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; }
   ctx.restore();
 }
-
 function update(dt){
   for(const s of stars){ s.x += s.vx * dt; s.y += s.vy * dt; if (s.x < -5) s.x = w+5; if (s.x > w+5) s.x=-5; if (s.y < -5) s.y=h+5; if (s.y>h+5) s.y=-5; }
   for(const n of nebula){ n.ox += n.vx * dt * 0.08; n.oy += n.vy * dt * 0.08; }
-  for(const p of planets){ /* subtle drift */ p.x += Math.sin(performance.now()/8000 + (p.hue/100)) * 0.0005 * dt; p.y += Math.cos(performance.now()/9000 + (p.hue/50)) * 0.0004 * dt; }
+  for(const p of planets){ p.x += Math.sin(performance.now()/8000 + (p.hue/100)) * 0.0005 * dt; p.y += Math.cos(performance.now()/9000 + (p.hue/50)) * 0.0004 * dt; }
   for(const a of asteroids){
     a.x += a.vx * dt * 1.0;
     a.y += a.vy * dt * 1.0;
     a.angle += a.angVel * dt * 0.6;
-    // wobble
     a.vy += Math.sin((performance.now()+ a.x)/1400)*0.0003;
-    // recycle asteroids off-screen
     if (a.vx > 0 && a.x > w + 160){ a.x = -rand(40,160); a.y = rand(0,h); a.vx = rand(0.25,0.9); a.vy = rand(-0.03,0.03); a.angle = rand(0,Math.PI*2); a.angVel = rand(-0.008,0.01); }
     if (a.vx < 0 && a.x < -160){ a.x = w + rand(40,160); a.y = rand(0,h); a.vx = -rand(0.25,0.9); a.vy = rand(-0.03,0.03); a.angle = rand(0,Math.PI*2); a.angVel = rand(-0.008,0.01); }
   }
 }
-
 let last = performance.now(), raf = null;
-function loop(now){
-  if (!enabled) return;
-  const dt = Math.max(0.6, (now - last)/16.666); last = now;
-  update(dt); drawBackground();
-  raf = requestAnimationFrame(loop);
-}
-
+function loop(now){ if (!enabled) return; const dt = Math.max(0.6, (now - last)/16.666); last = now; update(dt); drawBackground(); raf = requestAnimationFrame(loop); }
 function start(){ if (raf) cancelAnimationFrame(raf); last = performance.now(); if (!enabled) return; raf = requestAnimationFrame(loop); window.addEventListener('pointermove', pointer); }
 function stop(){ if (raf) cancelAnimationFrame(raf); raf=null; window.removeEventListener('pointermove', pointer); drawBackground(); }
-
 function pointer(e){ const dx = (e.clientX - w/2)*0.02; const dy = (e.clientY - h/2)*0.02; for(let i=0;i<nebula.length;i++){ nebula[i].x += dx*(i+1)*0.002; nebula[i].y += dy*(i+1)*0.002; } }
-
 function initAll(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; initStars(); initNebula(); initPlanets(); initAsteroids(); enabled = allowed(); const cssHide = window.matchMedia && window.matchMedia('(max-width:600px)').matches; canvas.style.display = (!cssHide && enabled) ? 'block' : (cssHide ? 'none' : 'block'); if (enabled && !cssHide) start(); else stop(); }
-
 window.addEventListener('resize', initAll);
-
 const btn = document.getElementById('bgToggle');
 function updateBtn(){ btn.textContent = enabled ? 'BG: On' : 'BG: Off'; btn.setAttribute('aria-pressed', String(enabled)); }
 btn.addEventListener('click', () => { userToggle = !(userToggle === true); localStorage.setItem('bgEnabled', userToggle ? '1' : '0'); enabled = allowed(); if (enabled) start(); else stop(); canvas.style.display = enabled ? 'block' : 'none'; updateBtn(); });
-
 initAll(); updateBtn(); if (!enabled) drawBackground();
 </script>
 
 <script>
-/* Terminal wiring (same) */
+
 const input = document.getElementById('cmdInput');
 const screen = document.getElementById('screen');
-const commands = { help: `available commands:\n - about\n - projects\n - skills\n - resume\n - contact\n - theme <color>\n - clear`, about: `Hi, I'm Mohamed Ghaith Romdhani.\nEngineer in networks, systems, and innovation.`, projects: `Projects:\n- 3D Printed Solar Energy Tree\n- Smart Forest Fire Detection\n- Zima Green Recycling\n- Aeroponic Farming Solutions`, skills: `Skills:\n- Networking & Systems\n- Cybersecurity\n- Cloud & Virtualization\n- AI & LangChain\n- Programming: Python, JS, Bash`, resume:`Resume: (add link if available)`, contact:`Email: ghaith.romdhani@ieee.org\nPhone: +216 58358417` };
+const commands = {
+  help: `available commands:\n - about\n - projects\n - skills\n - resume\n - contact\n - theme <color>\n - clear`,
+  about: `Hi, I'm Mohamed Ghaith Romdhani.\nEngineer in networks, systems, and innovation.`,
+  projects: `Projects:\n- 3D Printed Solar Energy Tree\n- Smart Forest Fire Detection\n- Zima Green Recycling\n- Aeroponic Farming Solutions`,
+  skills: `Skills:\n- Networking & Systems\n- Cybersecurity\n- Cloud & Virtualization\n- AI & LangChain\n- Programming: Python, JS, Bash`,
+  resume:`Resume: use the Resume button in the sidebar or click the LinkedIn / Email links.`,
+  contact:`Email: ghaith.romdhani@ieee.org\nPhone: +216 58358417`
+};
 const themes = { cyan:{accent:'#00ffff',text:'#cfe8ff'}, magenta:{accent:'#ff00ff',text:'#ffb3ff'}, green:{accent:'#00ff00',text:'#b3ffb3'}, amber:{accent:'#ff9900',text:'#ffd699'} };
 const history=[]; let histIndex=-1;
 function appendLine(txt){ const node=document.createElement('div'); node.className='line'; node.textContent=txt; screen.insertBefore(node, document.getElementById('entryRow')); screen.scrollTop = screen.scrollHeight; }
 function runCmd(raw){ const original = String(raw).trim(); if(!original) return; appendLine(`$ ${original}`); history.push(original); histIndex = history.length; input.value=''; const cmd = original.toLowerCase(); if (cmd === 'clear'){ document.querySelectorAll('.screen .line').forEach(el=>el.remove()); appendLine('Welcome — type help to get started.'); return; } if (cmd.startsWith('theme')){ const parts = original.split(' ').filter(Boolean); if (parts.length===1){ appendLine(`Available themes: ${Object.keys(themes).join(', ')}`); return; } const t = parts[1].toLowerCase(); if (themes[t]){ document.documentElement.style.setProperty('--accent', themes[t].accent); document.documentElement.style.setProperty('--text', themes[t].text); document.querySelector('.avatar .img').style.background = `linear-gradient(135deg, ${themes[t].accent}, #6ec1ff)`; appendLine(`Theme changed to ${t}`); } else appendLine(`Unknown theme: ${parts[1]}`); return; } if (commands[cmd]) appendLine(commands[cmd]); else appendLine(`command not found: ${original} — type help`); }
-document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); const cmd = btn.dataset.cmd; const href = btn.dataset.href || btn.getAttribute('href'); if (cmd){ runCmd(cmd); input.focus(); } else if (btn.id === 'resumeBtn'){ if (href && href !== '#' && href !== '') window.open(href,'_blank','noopener'); else appendLine('Resume link not set. Replace the Resume button href with your Drive link.'); } }));
-document.getElementById('themeSelect')?.addEventListener('change', e=>{ const t=e.target.value; if (themes[t]){ document.documentElement.style.setProperty('--accent', themes[t].accent); document.documentElement.style.setProperty('--text', themes[t].text); document.querySelector('.avatar .img').style.background = `linear-gradient(135deg, ${themes[t].accent}, #6ec1ff)`; appendLine(`Theme changed to ${t}`); }});
+document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', e => {
+  e.preventDefault();
+  const cmd = btn.dataset.cmd;
+  const href = btn.dataset.href || btn.getAttribute('href');
+  if (cmd){ runCmd(cmd); input.focus(); }
+  else if (btn.id === 'resumeBtn'){
+    if (href && href !== '#' && href !== '') window.open(href,'_blank','noopener');
+    else appendLine('Resume link not set. Use the LinkedIn/email links in the sidebar or replace the Resume button href with your Drive link.');
+  }
+}));
+document.getElementById('themeSelect')?.addEventListener('change', e=>{
+  const t=e.target.value;
+  if (themes[t]){ document.documentElement.style.setProperty('--accent', themes[t].accent); document.documentElement.style.setProperty('--text', themes[t].text); document.querySelector('.avatar .img').style.background = `linear-gradient(135deg, ${themes[t].accent}, ${document.documentElement.style.getPropertyValue('--accent-2') || '#6ec1ff'})`; appendLine(`Theme changed to ${t}`); }
+});
 input.addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); runCmd(input.value); }
   else if (e.key === 'ArrowUp'){ e.preventDefault(); if (history.length){ histIndex = Math.max(0, histIndex - 1); input.value = history[histIndex] || ''; } }
@@ -304,8 +268,10 @@ input.addEventListener('focus', ()=>{ document.body.classList.add('input-focused
 input.addEventListener('blur', ()=>document.body.classList.remove('input-focused'));
 screen.addEventListener('touchstart', ()=>input.focus());
 setTimeout(()=>appendLine('Type `help` to get started.'),300);
+
+
+document.getElementById('lnkLinkedIn')?.addEventListener('click', e=>{ appendLine('Opening LinkedIn...'); });
+document.getElementById('lnkEmail')?.addEventListener('click', e=>{ appendLine('Opening mail client...'); });
 </script>
 </body>
 </html>
-'@
-Set-Content -Path "C:\Users\ghait\OneDrive\Desktop\my sht\index.html" -Value $contents -Encoding UTF8
