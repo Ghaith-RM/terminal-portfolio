@@ -133,7 +133,7 @@ nav{margin-top:0.6rem}
 <button id="bgToggle" aria-pressed="true">BG: On</button>
 
 <script>
-
+/* Galaxy + planets + asteroids (keeps existing rendering and performance behavior) */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 let w = canvas.width = innerWidth;
@@ -227,7 +227,7 @@ initAll(); updateBtn(); if (!enabled) drawBackground();
 </script>
 
 <script>
-
+/* Terminal wiring + small UX improvements */
 const input = document.getElementById('cmdInput');
 const screen = document.getElementById('screen');
 const commands = {
@@ -269,7 +269,7 @@ input.addEventListener('blur', ()=>document.body.classList.remove('input-focused
 screen.addEventListener('touchstart', ()=>input.focus());
 setTimeout(()=>appendLine('Type `help` to get started.'),300);
 
-
+/* Make sidebar links echo to terminal when clicked */
 document.getElementById('lnkLinkedIn')?.addEventListener('click', e=>{ appendLine('Opening LinkedIn...'); });
 document.getElementById('lnkEmail')?.addEventListener('click', e=>{ appendLine('Opening mail client...'); });
 </script>
