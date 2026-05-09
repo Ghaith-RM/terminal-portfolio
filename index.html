@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Mohamed Ghaith Romdhani — Galaxy Terminal</title>
 
+<link rel="icon" href="pics.jpg" type="image/jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -160,7 +161,7 @@ canvas#bgCanvas{
   border-radius:12px;
   color:var(--text);
   text-decoration:none;
-  font-weight:650;
+  font-weight:600;
   font-size:0.92rem;
   transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
   background:rgba(255,255,255,0.00);
@@ -235,6 +236,13 @@ canvas#bgCanvas{
   border-radius:999px;
   flex:0 0 auto;
 }
+.link-text{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 
 .footer-note{
   margin-top:auto;
@@ -294,7 +302,10 @@ select#themeSelect:focus{ box-shadow: 0 0 0 3px rgba(0,230,255,0.12); }
   overflow:auto;
   position:relative;
   box-shadow: 0 12px 50px rgba(0,0,0,0.35);
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+.screen::-webkit-scrollbar{ display:none; }
 .screen::before{
   content:"";
   position:absolute; inset:0;
@@ -419,12 +430,12 @@ select#themeSelect:focus{ box-shadow: 0 0 0 3px rgba(0,230,255,0.12); }
         <div class="sidebar-links" aria-label="Links">
           <a id="lnkLinkedIn" href="https://www.linkedin.com/in/mohamedghaithromdhani/" target="_blank" rel="noopener">
             <span style="opacity:.9">in</span>
-            LinkedIn
+            <span class="link-text">LinkedIn</span>
             <span class="pill">open</span>
           </a>
           <a id="lnkEmail" href="mailto:ghaith.romdhani@ieee.org">
             <span style="opacity:.9">@</span>
-            ghaith.romdhani@ieee.org
+            <span class="link-text">ghaith.romdhani@ieee.org</span>
             <span class="pill">mail</span>
           </a>
         </div>
@@ -451,7 +462,7 @@ select#themeSelect:focus{ box-shadow: 0 0 0 3px rgba(0,230,255,0.12); }
 
       <div class="screen" id="screen" tabindex="0" role="application" aria-label="Terminal screen">
         <div class="line">Welcome — type <span style="color:var(--accent);font-weight:800">help</span> to see commands.</div>
-        <div class="line hint">Try: <span style="color:var(--accent)">projects</span>, <span style="color:var(--accent)">project fire</span>, <span style="color:var(--accent)">open fire</span>, <span style="color:var(--accent)">theme aurora</span></div>
+        <div class="line hint">Try: <span style="color:var(--accent)">projects</span>, <span style="color:var(--accent)">project SmartShield</span>, <span style="color:var(--accent)">open SmartAero</span>, <span style="color:var(--accent)">theme aurora</span></div>
 
         <div class="entry" id="entryRow">
           <div class="prompt">$</div>
@@ -500,10 +511,10 @@ const rockets = [];
 let nebulaHueShift = 0; 
 
 function starCounts(){
-  if (w>1500) return {near:60, mid:70, far:90};
-  if (w>1100) return {near:45, mid:55, far:70};
-  if (w>800)  return {near:30, mid:40, far:55};
-  return {near:14, mid:18, far:24};
+  if (w>1500) return {near:80, mid:100, far:140};
+  if (w>1100) return {near:60, mid:75,  far:110};
+  if (w>800)  return {near:40, mid:55,  far:80};
+  return {near:18, mid:26, far:38};
 }
 
 function initStars(){
@@ -526,19 +537,24 @@ function initStars(){
   mk(starsFar,  c.far,  0.3, 1.1, 0.08,0.55, -0.006,0.006, -0.002,0.002);
   mk(starsMid,  c.mid,  0.4, 1.4, 0.10,0.75, -0.012,0.012, -0.004,0.004);
   mk(starsNear, c.near, 0.6, 1.9, 0.12,0.95, -0.020,0.020, -0.006,0.006);
+
+  starsNear.forEach(s => { if (Math.random() < 0.22) { s.bright = true; s.r = Math.min(s.r * 1.6, 2.6); } });
+  starsMid.forEach(s  => { if (Math.random() < 0.10) { s.bright = true; } });
 }
 
 function initNebula(){
   nebula.length=0;
-  const count = Math.max(2, Math.round(w/650));
+  const count = Math.max(3, Math.round(w/500));
+  const hues = [rand(235,265), rand(280,310), rand(175,210), rand(320,350)];
   for(let i=0;i<count;i++){
     nebula.push({
-      x:rand(w*0.10,w*0.90),
-      y:rand(h*0.06,h*0.86),
-      r:rand(Math.min(w,h)*0.18,Math.min(w,h)*0.46),
-      hue:(i%2===0)?rand(235,305):rand(175,220),
+      x:rand(w*0.08,w*0.92),
+      y:rand(h*0.04,h*0.88),
+      r:rand(Math.min(w,h)*0.22,Math.min(w,h)*0.55),
+      hue: hues[i % hues.length],
       ox:rand(-40,40), oy:rand(-40,40),
-      vx:rand(-0.02,0.02), vy:rand(-0.02,0.02)
+      vx:rand(-0.025,0.025), vy:rand(-0.025,0.025),
+      pulse: rand(0, Math.PI*2)
     });
   }
 }
@@ -602,39 +618,69 @@ function initRockets(){
 }
 
 function spawnComet(){
-  if (comets.length > 2) return;
+  if (comets.length > 3) return;
   const fromLeft = Math.random() < 0.5;
-  const startX = fromLeft ? -60 : w+60;
-  const startY = rand(h*0.05, h*0.55);
-  const speed = rand(8, 14);
-  comets.push({ x:startX, y:startY, vx: fromLeft ? speed : -speed, vy: rand(2.0, 4.5), life: 0, max: rand(55, 90) });
+  const startX = fromLeft ? -80 : w+80;
+  const startY = rand(h*0.04, h*0.60);
+  const speed = rand(11, 20);
+  comets.push({ x:startX, y:startY, vx: fromLeft ? speed : -speed, vy: rand(1.5, 5.0), life: 0, max: rand(50, 80) });
 }
 
 function drawComets(){
   for(const c of comets){
     const t = c.life / c.max;
-    const alpha = Math.sin(Math.PI * Math.min(1,t)) * 0.9;
+    const alpha = Math.sin(Math.PI * Math.min(1, t)) * 0.98;
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha = alpha;
 
-    const tail = 140;
-    const gx = ctx.createLinearGradient(c.x, c.y, c.x - c.vx*tail*0.35, c.y - c.vy*tail*0.35);
-    gx.addColorStop(0, `rgba(255,255,255,0.85)`);
-    gx.addColorStop(0.4, `rgba(0,230,255,0.25)`);
-    gx.addColorStop(1, `rgba(0,0,0,0)`);
-    ctx.strokeStyle = gx;
-    ctx.lineWidth = 2.2;
+    const speed = Math.sqrt(c.vx*c.vx + c.vy*c.vy);
+    const tail = 260 + speed * 6;
+    const dx = -c.vx / speed;
+    const dy = -c.vy / speed;
+
+    // wide soft glow tail
+    ctx.globalAlpha = alpha * 0.35;
+    const wideTail = ctx.createLinearGradient(c.x, c.y, c.x + dx*tail, c.y + dy*tail);
+    wideTail.addColorStop(0,   'rgba(180,240,255,0.9)');
+    wideTail.addColorStop(0.3, 'rgba(0,200,255,0.3)');
+    wideTail.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.strokeStyle = wideTail;
+    ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(c.x, c.y);
-    ctx.lineTo(c.x - c.vx*tail*0.12, c.y - c.vy*tail*0.12);
+    ctx.lineTo(c.x + dx*tail, c.y + dy*tail);
     ctx.stroke();
 
-    ctx.fillStyle = `rgba(255,255,255,0.92)`;
+    // sharp bright core tail
+    ctx.globalAlpha = alpha;
+    const coreTail = ctx.createLinearGradient(c.x, c.y, c.x + dx*tail*0.45, c.y + dy*tail*0.45);
+    coreTail.addColorStop(0,   'rgba(255,255,255,1)');
+    coreTail.addColorStop(0.25,'rgba(160,235,255,0.7)');
+    coreTail.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.strokeStyle = coreTail;
+    ctx.lineWidth = 1.8;
     ctx.beginPath();
-    ctx.arc(c.x, c.y, 2.2, 0, Math.PI*2);
+    ctx.moveTo(c.x, c.y);
+    ctx.lineTo(c.x + dx*tail*0.45, c.y + dy*tail*0.45);
+    ctx.stroke();
+
+    // head glow
+    ctx.globalAlpha = alpha;
+    const hg = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 14);
+    hg.addColorStop(0,   'rgba(255,255,255,1)');
+    hg.addColorStop(0.35,'rgba(100,220,255,0.6)');
+    hg.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = hg;
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, 14, 0, Math.PI*2);
     ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,1)';
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, 2.6, 0, Math.PI*2);
+    ctx.fill();
+
     ctx.restore();
   }
 }
@@ -826,9 +872,31 @@ function drawStars(arr, twinkleScale, alphaBoost){
   for(const s of arr){
     const tw = 0.55 + 0.45*Math.sin((now/(900*twinkleScale))+s.phase);
     const alpha = Math.max(0.03, (s.base * tw) + alphaBoost);
+
+    if (s.bright) {
+      const glow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 7);
+      glow.addColorStop(0, `rgba(200,230,255,${alpha * 0.6})`);
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 7, 0, Math.PI*2);
+      ctx.fill();
+
+      const spikeLen = s.r * 10;
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.strokeStyle = 'rgba(200,230,255,1)';
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(s.x - spikeLen, s.y); ctx.lineTo(s.x + spikeLen, s.y);
+      ctx.moveTo(s.x, s.y - spikeLen); ctx.lineTo(s.x, s.y + spikeLen);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
     ctx.fill();
   }
 }
@@ -841,16 +909,30 @@ function drawBackground(){
   
   ctx.globalCompositeOperation='lighter';
   const t = performance.now()/6000;
+
+  // milky way band
+  const mw = ctx.createLinearGradient(w*0.05, 0, w*0.95, h);
+  mw.addColorStop(0,    'rgba(0,0,0,0)');
+  mw.addColorStop(0.30, 'rgba(90,120,200,0.05)');
+  mw.addColorStop(0.48, 'rgba(150,175,255,0.10)');
+  mw.addColorStop(0.52, 'rgba(150,175,255,0.10)');
+  mw.addColorStop(0.70, 'rgba(90,120,200,0.05)');
+  mw.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = mw;
+  ctx.fillRect(0, 0, w, h);
+
   for(const n of nebula){
-    const nx = n.x + Math.sin(t + n.ox)*8;
-    const ny = n.y + Math.cos(t/1.2 + n.oy)*6;
+    const nx = n.x + Math.sin(t + n.ox)*10;
+    const ny = n.y + Math.cos(t/1.2 + n.oy)*8;
+    const pulse = 0.88 + 0.12 * Math.sin(t*1.4 + n.pulse);
 
     const hue = (n.hue + nebulaHueShift + 360) % 360;
 
     const rg = ctx.createRadialGradient(nx,ny,0,nx,ny,n.r);
-    rg.addColorStop(0,   `hsla(${hue},92%,70%,0.18)`);
-    rg.addColorStop(0.25,`hsla(${hue},82%,56%,0.11)`);
-    rg.addColorStop(0.55,`hsla(${(hue+20)%360},60%,36%,0.06)`);
+    rg.addColorStop(0,   `hsla(${hue},95%,72%,${0.24*pulse})`);
+    rg.addColorStop(0.22,`hsla(${hue},88%,60%,${0.15*pulse})`);
+    rg.addColorStop(0.50,`hsla(${(hue+25)%360},70%,42%,${0.09*pulse})`);
+    rg.addColorStop(0.78,`hsla(${(hue+50)%360},55%,30%,0.03)`);
     rg.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=rg;
     ctx.beginPath();
@@ -862,15 +944,28 @@ function drawBackground(){
   ctx.globalCompositeOperation='source-over';
   for(const p of planets){
     p._rot = (p._rot||0) + (p.spin||0);
+
+    // atmosphere glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const atm = ctx.createRadialGradient(p.x, p.y, p.r * 0.7, p.x, p.y, p.r * 2.2);
+    atm.addColorStop(0,   `hsla(${p.hue},85%,70%,0.18)`);
+    atm.addColorStop(0.4, `hsla(${p.hue},75%,55%,0.08)`);
+    atm.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = atm;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 2.2, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
     const gx = ctx.createRadialGradient(p.x - p.r*0.3, p.y - p.r*0.3, p.r*0.1, p.x, p.y, p.r);
-    gx.addColorStop(0, `hsl(${p.hue},75%,78%)`);
-    gx.addColorStop(0.55, `hsl(${p.hue},55%,46%)`);
-    gx.addColorStop(1, `hsl(${p.hue},30%,18%)`);
+    gx.addColorStop(0,    `hsl(${p.hue},80%,82%)`);
+    gx.addColorStop(0.45, `hsl(${p.hue},60%,50%)`);
+    gx.addColorStop(1,    `hsl(${p.hue},35%,20%)`);
     ctx.fillStyle=gx;
     ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
 
+    // highlight shimmer
     ctx.save();
-    ctx.globalAlpha=0.08; ctx.fillStyle='#fff';
+    ctx.globalAlpha=0.10; ctx.fillStyle='#fff';
     ctx.beginPath();
     ctx.ellipse(p.x,p.y,p.r*0.9,p.r*0.32,p._rot,0,Math.PI*2);
     ctx.fill();
@@ -880,10 +975,14 @@ function drawBackground(){
       ctx.save();
       ctx.translate(p.x,p.y);
       ctx.rotate(p.ringTilt||0);
+      const rg = ctx.createRadialGradient(0,0,p.r,0,0,p.r+p.ringWidth*2);
+      rg.addColorStop(0, `hsla(${p.hue},70%,70%,0.18)`);
+      rg.addColorStop(0.5, `hsla(${p.hue},60%,60%,0.10)`);
+      rg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.strokeStyle = rg;
+      ctx.lineWidth = p.ringWidth * 1.4;
       ctx.beginPath();
       ctx.ellipse(0,0,p.r+p.ringWidth,p.r*0.36,0,0,Math.PI*2);
-      ctx.lineWidth=6;
-      ctx.strokeStyle='rgba(255,255,255,0.06)';
       ctx.stroke();
       ctx.restore();
     }
@@ -908,7 +1007,7 @@ function drawBackground(){
   ctx.globalCompositeOperation='source-over';
   const vign = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)/2.2,w/2,h/2,Math.max(w,h)/1.1);
   vign.addColorStop(0,'rgba(0,0,0,0)');
-  vign.addColorStop(1,'rgba(0,0,0,0.35)');
+  vign.addColorStop(1,'rgba(0,0,0,0.55)');
   ctx.fillStyle=vign;
   ctx.fillRect(0,0,w,h);
 }
@@ -972,7 +1071,7 @@ function update(dt){
   for(let i=comets.length-1;i>=0;i--){
     if (comets[i].life >= comets[i].max) comets.splice(i,1);
   }
-  if (Math.random() < 0.006) spawnComet();
+  if (Math.random() < 0.010) spawnComet();
 }
 
 
@@ -1034,7 +1133,7 @@ function updateBtn(){
   bgBtn.setAttribute('aria-pressed', String(enabled));
 }
 bgBtn.addEventListener('click', ()=>{
-  userToggle = !(userToggle === true);
+  userToggle = !enabled;
   localStorage.setItem('bgEnabled', userToggle ? '1' : '0');
   enabled = allowed();
   if (enabled) start(); else stop();
@@ -1059,31 +1158,34 @@ const PROJECTS = [
     name: "SmartShield — SIEM Platform (Wazuh)",
     desc: "Designed a SIEM solution using Wazuh for centralized log collection, correlation, dashboards, and threat detection in enterprise environments.",
     tags: ["SIEM", "Wazuh", "Security Ops", "Monitoring"],
-  
+    links: { demo: "#", github: "#" }
   },
   {
     id: "EcoHarvest",
     name: "Renewable Energy Plant",
     desc: "Designed a small decoration plant that can collect solar energy and be used in offices and houses.",
     tags: ["3D Printing", "Renewable Energy", "IOT"],
+    links: { demo: "#", github: "#" }
   },
   {
     id: "SmartAero",
     name: "SmartAero — Smart Aeroponic System",
     desc: "Built an IoT-based smart aeroponic farming system with automated monitoring and nutrient delivery for sustainable agriculture.",
     tags: ["IoT", "Automation", "Sensors", "Sustainability"],
+    links: { demo: "#", github: "#" }
   },
   {
     id: "zima",
     name: "Zima Green — Recycling → 3D Filament",
     desc: "Built a plastic recycling solution producing 3D printing filament and manufactured customized keychains from recycled materials.",
     tags: ["Sustainability", "Recycling", "3D Printing"],
+    links: { demo: "#", github: "#" }
   }
 ];
 
 
 function findProject(id){
-  return PROJECTS.find(p => p.id === id);
+  return PROJECTS.find(p => p.id.toLowerCase() === id.toLowerCase());
 }
 
 const commands = {
@@ -1149,9 +1251,6 @@ Technologies:
 - French (Fluent)
 - Turkish (Conversational)`,
 
-  resume: `Resume:
-Use the Resume button in the sidebar (set the link), or open LinkedIn.`,
-
   contact: `Contact:
 Email: ghaith.romdhani@ieee.org
 LinkedIn: linkedin.com/in/mohamedghaithromdhani
@@ -1180,11 +1279,14 @@ function appendLine(txt){
   screen.scrollTop = screen.scrollHeight;
 }
 
+let nextLineAt = 0;
 function appendLinesStaggered(lines, delay=55){
-  
-  lines.forEach((line, idx)=>{
-    setTimeout(()=>appendLine(line), idx*delay);
+  const now = Date.now();
+  const start = Math.max(now, nextLineAt);
+  lines.forEach((line, idx) => {
+    setTimeout(() => appendLine(line), start + idx * delay - now);
   });
+  nextLineAt = start + lines.length * delay;
 }
 
 function setTheme(name){
@@ -1205,8 +1307,9 @@ function setTheme(name){
   if (imgBox) imgBox.style.background = `linear-gradient(135deg, ${t.accent}, ${t.accent2})`;
 
   themeLabel.textContent = name;
+  const sel = document.getElementById('themeSelect');
+  if (sel) sel.value = name;
 
-  
   try { if (typeof drawBackground === "function") drawBackground(); } catch {}
   return true;
 }
@@ -1230,8 +1333,11 @@ function renderProjectDetail(p){
   lines.push(`id: ${p.id}`);
   lines.push(`desc: ${p.desc}`);
   lines.push(`tags: ${p.tags.join(", ")}`);
-  lines.push(`links: demo=${p.links.demo || "-"} | github=${p.links.github || "-"}`);
-  lines.push(`try: open ${p.id} demo`);
+  const hasDemo   = p.links.demo   && p.links.demo   !== "#";
+  const hasGithub = p.links.github && p.links.github !== "#";
+  lines.push(`demo: ${hasDemo ? p.links.demo : "(not set)"} | github: ${hasGithub ? p.links.github : "(not set)"}`);
+  if (hasDemo)   lines.push(`try: open ${p.id} demo`);
+  if (hasGithub) lines.push(`try: open ${p.id} github`);
   return lines;
 }
 
@@ -1264,10 +1370,13 @@ function runCmd(raw){
   const arg2 = (parts[2] || "").toLowerCase();
 
   if (cmd === 'resume') {
-  appendLine('Downloading resume...');
-  window.location.href = 'CV FINAL.pdf';
-  return;
-}
+    appendLine('Downloading resume...');
+    const a = document.createElement('a');
+    a.href = 'CV FINAL.pdf';
+    a.download = 'CV FINAL.pdf';
+    a.click();
+    return;
+  }
 
   if(cmd === 'clear'){
     [...screen.querySelectorAll('.line')].forEach(el => el.remove());
@@ -1291,7 +1400,7 @@ function runCmd(raw){
   }
 
   if(cmd === 'project'){
-    if(!arg1){ appendLine("Usage: project <id>  (example: project fire)"); return; }
+    if(!arg1){ appendLine("Usage: project <id>  (example: project SmartShield)"); return; }
     const p = findProject(arg1);
     if(!p){ appendLine(`Unknown project id: ${arg1}. Type projects to list.`); return; }
     appendLinesStaggered(renderProjectDetail(p), 45);
@@ -1356,7 +1465,7 @@ input.addEventListener('keydown', e => {
     e.preventDefault();
     const val = input.value.trim().toLowerCase();
     if(!val) return;
-    const keys = Object.keys(commands).concat(['theme','projects','project','open']).filter(k => k.startsWith(val));
+    const keys = Object.keys(commands).concat(['theme','projects','project','open','resume']).filter(k => k.startsWith(val));
     if(keys.length) input.value = keys[0];
   }
 });
