@@ -1154,30 +1154,72 @@ const themeLabel = document.getElementById('themeLabel');
 
 const PROJECTS = [
   {
-    id: "SmartShield",
-    name: "SmartShield — SIEM Platform (Wazuh)",
-    desc: "Designed a SIEM solution using Wazuh for centralized log collection, correlation, dashboards, and threat detection in enterprise environments.",
-    tags: ["SIEM", "Wazuh", "Security Ops", "Monitoring"],
+    id: "LogI",
+    name: "LogI — Intelligent Infrastructure & Security Analysis Assistant",
+    desc: "AI-powered assistant for security log analysis in banking environments. Integrated Graylog, LLMs, and RAG techniques to analyze logs and generate security insights. Designed secure query generation and evidence-based incident analysis workflows.",
+    tags: ["AI", "RAG", "LLMs", "Graylog", "Security", "NLP"],
     links: { demo: "#", github: "#" }
   },
   {
-    id: "EcoHarvest",
-    name: "Renewable Energy Plant",
-    desc: "Designed a small decoration plant that can collect solar energy and be used in offices and houses.",
-    tags: ["3D Printing", "Renewable Energy", "IOT"],
+    id: "SmartShield",
+    name: "SmartShield — SIEM Platform",
+    desc: "Designed and implemented a SIEM solution using Wazuh, TheHive, and Shuffle. Centralized log collection, event correlation, alert management, and automated incident response workflows.",
+    tags: ["SIEM", "Wazuh", "TheHive", "Shuffle", "Security Ops"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "GraylogSIEM",
+    name: "Graylog SIEM Infrastructure",
+    desc: "Built and configured a centralized monitoring and log management platform using Graylog. Integrated multiple data sources for infrastructure monitoring and cybersecurity analysis.",
+    tags: ["Graylog", "SIEM", "Log Management", "Monitoring"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "AIScope",
+    name: "AIScope — AI-Powered Land Cover Dashboard",
+    desc: "Developed an AI-powered dashboard to track historical land cover changes from 2000 to 2023. Implemented machine learning models to forecast land cover dynamics up to 2033. Created interactive maps, trend visualizations, and an AI chatbot for insights.",
+    tags: ["AI", "Machine Learning", "Data Visualization", "Forecasting"],
     links: { demo: "#", github: "#" }
   },
   {
     id: "SmartAero",
     name: "SmartAero — Smart Aeroponic System",
-    desc: "Built an IoT-based smart aeroponic farming system with automated monitoring and nutrient delivery for sustainable agriculture.",
+    desc: "Developed an IoT-based smart aeroponic farming system for sustainable agriculture. Automated environmental monitoring and nutrient delivery processes.",
     tags: ["IoT", "Automation", "Sensors", "Sustainability"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "EcoHarvest",
+    name: "EcoHarvest — Smart Solar Energy Solution",
+    desc: "Developed an innovative decorative plant prototype capable of converting solar energy into usable electrical power. Focused on combining sustainability, renewable energy, and smart design concepts.",
+    tags: ["Renewable Energy", "IoT", "Sustainability", "3D Printing"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "Optix",
+    name: "Optix — AI-Assisted Overtaking System",
+    desc: "Developed an AI-assisted driving support system for safe overtaking of buses and semi-trucks. Combined IoT sensors, vehicle-to-vehicle communication, and AI analysis to generate a 3D environmental view for drivers.",
+    tags: ["AI", "IoT", "Computer Vision", "Embedded Systems"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "FreeFire",
+    name: "FreeFire — Organic Waste to Gas System",
+    desc: "Designed a smart system that converts organic waste into usable gas for households and farms. Promoted sustainable energy production and waste reduction practices.",
+    tags: ["Sustainability", "IoT", "Smart Systems", "Energy"],
+    links: { demo: "#", github: "#" }
+  },
+  {
+    id: "ThroughEyes",
+    name: "Through Their Eyes — Speech & Sign Language Translation",
+    desc: "Developed a communication system capable of translating speech into sign language and vice versa. Designed to support communication and education for deaf and mute children.",
+    tags: ["AI", "NLP", "Speech Recognition", "Computer Vision"],
     links: { demo: "#", github: "#" }
   },
   {
     id: "zima",
     name: "Zima Green — Recycling → 3D Filament",
-    desc: "Built a plastic recycling solution producing 3D printing filament and manufactured customized keychains from recycled materials.",
+    desc: "Built a plastic recycling solution capable of producing 3D printing filament from recycled materials. Manufactured customized 3D-printed keychains using recycled plastic waste.",
     tags: ["Sustainability", "Recycling", "3D Printing"],
     links: { demo: "#", github: "#" }
   }
@@ -1193,6 +1235,7 @@ const commands = {
  - about
  - education
  - experience
+ - awards
  - leadership
  - projects
  - project <id>
@@ -1204,46 +1247,86 @@ const commands = {
  - clear`,
 
   about: `Hi, I'm Mohamed Ghaith Romdhani.
-Final-year Networks & Systems Engineering student focused on datacenters, enterprise networks, and IT infrastructure.
-Intern in bank HQ + datacenter environments across systems, networking, cybersecurity (SIEM), and applied AI.
-Former IEEE Student Branch Chair (IEEE ISIMA SB), current mentor, and national challenge winner.`,
+Final-year Bachelor's student in Networks and Systems Engineering.
+Strong focus on datacenters, enterprise networks, and IT infrastructure.
+Completed multiple internships in bank HQ and datacenter environments.
+Experienced in networking, systems administration, cybersecurity (SIEM), AI, IoT, and sustainable technologies.
+Former IEEE Student Branch Chair, current mentor, and national challenge winner.`,
 
   education: `Education:
-Bachelor s Degree in Networks & Systems Engineering
+Bachelor's in Networks & Systems Engineering (2023–2026)
 - Higher Institute of Computer Science Mahdia (ISIMA)
 - Focus: Networks, Systems, Datacenters, IT Infrastructure
-- End-of-Studies Project conducted with a banking datacenter`,
+- End-of-Studies Project conducted with AMEN Bank (datacenter)
+
+Academic & Professional Training — AMIDEAST
+- English proficiency, communication, and international collaboration`,
 
   experience: `Experience:
+Infrastructure & Security Analysis AI Assistant — End-of-Studies Project
+- Developed an offline AI assistant with AMEN Bank for infrastructure monitoring and security log analysis
+- Integrated Graylog and Zabbix to collect and analyze logs, alerts, and monitoring data
+- Designed a local RAG system using internal infrastructure documentation and machine inventory data
+- Enabled natural language interaction for interpreting logs and investigating incidents
+- Fully offline architecture to meet enterprise security and confidentiality requirements
+
 IT & Datacenter Intern (SIEM) — Bank Headquarters
-- SIEM using Graylog: ingestion, analysis, dashboards, alerting
-- Exposure to datacenter monitoring + security operations
+- SIEM using Graylog: log ingestion, analysis, dashboards, and alerting
+- Exposure to datacenter monitoring and security operations
 
-IT & Systems Intern (Offline RAG) — Bank Headquarters
-- Designed and implemented an offline RAG system (no internet)
-- Deployed AI models in secure isolated environments
-- Integrated internal documentation / knowledge bases
+Founder — Clothing Brand
+- Founded and managed an independent clothing brand
+- Handled branding, marketing, logistics, and customer relations`,
 
-End-of-Studies Project — Bank Datacenter
-- Collaboration with bank IT + datacenter teams
-- Focus on systems, infrastructure, and applied AI solutions`,
+  awards: `Awards & Achievements:
+Winner — TN2056 National AgriTech Challenge
+- Developed a smart hydroponic system to minimize water consumption and reduce human intervention
+- Built an MVP and presented at a national congress before an international jury
 
-  leadership: `Leadership & Activities:
-- IEEE Student Branch Chair (IEEE ISIMA SB) — 1.5 years
-  Led workshops, conferences, competitions; won multiple national IEEE challenges
-- IEEE Mentor — mentoring students in technical projects + leadership
-- Co-Lead, IEEEXtreme Tunisia — national initiative + team preparation
-- Founder, Clothing Brand — branding, marketing, logistics, customer relations
-- Active Member, Leo Club Carthage — community + humanitarian initiatives`,
+Second Place — ICAIGE National Innovation Challenge
+- Developed an innovative decorative plant prototype converting solar energy into electrical power
 
-  skills: `Core Areas:
-- Computer Networks, Datacenters, Systems Engineering, IT Infrastructure
+Third Place — INNOHACK National Challenge
+- Developed an AI-assisted overtaking support system for buses and semi-trucks
+- Combined IoT, sensors, and vehicle-to-vehicle communication for 3D environmental view and AI-based analysis`,
 
-Technologies:
-- Linux, Networking Fundamentals
-- SIEM: Graylog, Wazuh
-- AI: NLP, ML
-- IoT, Virtualization, Cloud Concepts`,
+  leadership: `Leadership & Volunteering:
+IEEE Student Branch Chair — IEEE ISIMA SB (1.5 years)
+- Led a multidisciplinary team
+- Organized workshops, conferences, competitions, and technical events
+- Won multiple national-level IEEE challenges
+
+IEEE Mentor — IEEE ISIMA Student Branch
+- Mentoring students in technical projects, leadership, and IEEE activities
+
+Co-Lead — IEEEXtreme Tunisia
+- Co-leading national IEEEXtreme initiatives and team preparation
+
+Active Member — Leo Club Carthage
+- Social, humanitarian, and community service initiatives`,
+
+  skills: `Technical Skills:
+Cybersecurity & SIEM:
+- Graylog, Wazuh, TheHive, Shuffle
+- SIEM Architecture, Threat Detection, Log Analysis
+- Incident Response, Security Monitoring, Event Correlation
+
+AI, Data & Machine Learning:
+- LLMs, LangChain, RAG, NLP, Whisper
+- Machine Learning, AI Chatbots, Data Visualization
+- Computer Vision, Speech Recognition
+
+Systems & Infrastructure:
+- Linux, System Administration, Docker
+- Proxmox, VMware, VirtualBox, Zabbix
+- Cloud Concepts, Infrastructure Monitoring
+
+Networking & IoT:
+- Enterprise Networks, IoT Systems, Sensors
+- 3D Imaging Sensors, Smart Systems, Embedded Systems
+
+Development & Tools:
+- Python, MongoDB, GitHub, REST APIs`,
 
   languages: `Languages:
 - Arabic (Native)
@@ -1465,7 +1548,7 @@ input.addEventListener('keydown', e => {
     e.preventDefault();
     const val = input.value.trim().toLowerCase();
     if(!val) return;
-    const keys = Object.keys(commands).concat(['theme','projects','project','open','resume']).filter(k => k.startsWith(val));
+    const keys = Object.keys(commands).concat(['theme','projects','project','open','resume','awards']).filter(k => k.startsWith(val));
     if(keys.length) input.value = keys[0];
   }
 });
